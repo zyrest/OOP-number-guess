@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>登陆</title>
+
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+</head>
+
+<body>
+
+<nav class="mx-auto navbar sticky-top navbar-light bg-light navbar-expand-lg">
+    <a class="navbar-brand" href="#">@_@ 0.0 :)</a>
+</nav>
+
+<div id="login" class="login-tablet">
+
+    <div >
+        <h1>管理员登陆</h1>
+        <form>
+            <input v-model="userName" type="text" placeholder="请输入用户名" >
+            <input v-model="password" type="password" placeholder="请输入密码" >
+            <div class="forgot">
+                <i id="tip">{{ tip }}</i>
+                <button @click="loginUser" type="button" id="submitLogin">登录</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+</body>
+
+<script>
+
+    let app = new Vue({
+        el: '#login',
+        data: {
+            userName: '',
+            password: '',
+            tip: ''
+        },
+        methods: {
+            loginUser: function () {
+                let reqData = {
+                    userName: this.userName,
+                    password: this.password
+                }
+
+                
+            }
+        }
+    })
+</script>
+
+</html>

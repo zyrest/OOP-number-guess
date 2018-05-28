@@ -18,7 +18,7 @@ public class UserService {
     @Resource
     private UserMapper mapper;
 
-    public void addUser(User user) {
+    public void registerUser(User user) {
         user.setId(null);
         user.setPassword(PasswordUtil.createHash(user.getPassword()));
         mapper.save(user);
