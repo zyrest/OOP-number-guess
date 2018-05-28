@@ -83,6 +83,14 @@
             margin: 0 auto;
             width: 50%;
         }
+
+        .noselect {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
     </style>
 </head>
 
@@ -139,24 +147,24 @@
                     <table>
                         <tbody>
                             <tr>
-                                <td><span class="kb-key" value="1">1</span></td>
-                                <td><span class="kb-key" value="2">2</span></td>
-                                <td><span class="kb-key" value="3">3</span></td>
+                                <td @click="updateMsg(1)"><span class="kb-key noselect" value="1">1</span></td>
+                                <td @click="updateMsg(2)"><span class="kb-key noselect" value="2">2</span></td>
+                                <td @click="updateMsg(3)"><span class="kb-key noselect" value="3">3</span></td>
                             </tr>
                             <tr>
-                                <td><span class="kb-key" value="4">4</span></td>
-                                <td><span class="kb-key" value="5">5</span></td>
-                                <td><span class="kb-key" value="6">6</span></td>
+                                <td @click="updateMsg(4)"><span class="kb-key noselect" value="4">4</span></td>
+                                <td @click="updateMsg(5)"><span class="kb-key noselect" value="5">5</span></td>
+                                <td @click="updateMsg(6)"><span class="kb-key noselect" value="6">6</span></td>
                             </tr>
                             <tr>
-                                <td><span class="kb-key" value="7">7</span></td>
-                                <td><span class="kb-key" value="8">8</span></td>
-                                <td><span class="kb-key" value="9">9</span></td>
+                                <td @click="updateMsg(7)"><span class="kb-key noselect" value="7">7</span></td>
+                                <td @click="updateMsg(8)"><span class="kb-key noselect" value="8">8</span></td>
+                                <td @click="updateMsg(9)"><span class="kb-key noselect" value="9">9</span></td>
                             </tr>
                             <tr>
-                                <td><span class="kb-key" value=""></span></td>
-                                <td><span class="kb-key" value="0">0</span></td>
-                                <td><span class="kb-key" value="delete"><-</span></td>
+                                <td><span class="kb-key noselect" value=""></span></td>
+                                <td @click="updateMsg(0)"><span class="kb-key noselect" value="0">0</span></td>
+                                <td @click="backspace"><span class="kb-key noselect" value="delete"><-</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -190,7 +198,7 @@
                 return ans;
             }
         },
-        created: {
+        created: function () {
 
         },
         methods: {
@@ -228,6 +236,12 @@
                 }
 
                 return [same, common]
+            },
+            updateMsg(num) {
+                this.msg += num;
+            },
+            backspace() {
+                this.msg = this.msg.substr(0, this.msg.length-1)
             }
         },
         watch: {
@@ -249,8 +263,6 @@
                         }
                     }
                 }
-
-
             }
         }
     });
