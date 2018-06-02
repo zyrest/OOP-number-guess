@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+
+    <title>积分榜</title>
+
+    <link href="/css/bootstrap.css" rel="stylesheet">
+
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+            background: #fbf9fe;
+        }
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        html, body {
+            overflow-x: hidden; /* Prevent scroll on narrow devices */
+        }
+
+        .border-bottom { border-bottom: 1px solid #e5e5e5; }
+
+        .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+
+        .lh-125 { line-height: 1.25; }
+
+        .the-score {
+            margin: 0 30px;
+        }
+    </style>
+</head>
+
+<body id="hole">
+
+<div id="container">
+
+    <nav class="mx-auto navbar sticky-top navbar-light bg-light navbar-expand-lg">
+        <a class="navbar-brand" href="#">@_@ 0.0 :)</a>
+
+        <div class="container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/index">开始游戏</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">积分榜</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/record">个人纪录</a>
+                </li>
+            </ul>
+
+            <span>{{ username }}</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row mx-auto">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 mx-auto">
+
+                <div class="my-3 p-3 bg-white rounded box-shadow">
+                    <h6 class="border-bottom border-gray pb-2 mb-0">当前积分</h6>
+
+                    <div v-for="rank in rankData" class="media text-muted pt-3">
+
+                        <!--<img data-src="holder.js/32x32?theme=thumb&bg=007bff&fg=007bff&size=1" alt="" class="mr-2 rounded">-->
+                        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                            <strong class="d-block text-gray-dark">@{{ rank.userName }}</strong>
+
+                            <span class="the-score float-right">积分： {{ rank.sumScore }}</span>
+                        </p>
+
+                    </div>
+
+                    <small class="d-block text-right mt-3">
+                        <a id="load-more" @click="pagePlus" href="#">查看更多</a>
+                    </small>
+
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+</div>
+
+</body>
+
+
+<script src="/js/vue.js"></script>
+<script src="/js/vue-resource.js"></script>
+<script src="/js/jquery-3.3.1.js"></script>
+<script>
+    let questUrl = 'http://localhost:8080/rank/';
+
+    let app = new Vue({
+        el: '#container',
+        data: {
+            page: 1,
+            rankData: [],
+            enough: false,
+
+            username: sessionStorage.username,
+            userId: sessionStorage.userId
+        },
+        computed: {
+
+        },
+        created: function () {
+            this.fetchData();
+        },
+        methods: {
+            fetchData: function () {
+                let url = questUrl + this.page;
+                let vm  = this;
+                this.$http.get(url)
+                    .then(result => {
+                        let res = result.body;
+                        if (res.data.length === 0) {
+                            $('#load-more').removeAttr('href');
+                            this.enough = true;
+                        }
+                        res.data.forEach((value, index) => {
+                            vm.rankData.push(value);
+                        })
+                    })
+            },
+            pagePlus: function () {
+                if (! this.enough) this.page += 1;
+            }
+        },
+        watch: {
+            page(current) {
+                if (this.enough) return false;
+                this.fetchData();
+            }
+        }
+    });
+
+</script>
+</html>

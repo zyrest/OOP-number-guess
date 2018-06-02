@@ -30,7 +30,16 @@ public class UserService {
 
     public boolean loginUser(User user) {
         User target = mapper.findByUsername(user.getUsername());
+        if (PasswordUtil.validatePassword(user.getPassword(), target.getPassword())) {
+            user.setId(target.getId());
+            return true;
+        }
 
-        return PasswordUtil.validatePassword(user.getPassword(), target.getPassword());
+        return false;
+    }
+
+    public User getUserById(Integer id) {
+
+        return mapper.findById(id).get();
     }
 }

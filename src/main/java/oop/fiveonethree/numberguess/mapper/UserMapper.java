@@ -7,9 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Created by ZhouYing.
  * www.zhouying.xyz
  */
-public interface UserMapper extends JpaRepository<User, Long> {
+public interface UserMapper extends JpaRepository<User, Integer> {
 
     User findByUsername(String userName);
 
-    
 }

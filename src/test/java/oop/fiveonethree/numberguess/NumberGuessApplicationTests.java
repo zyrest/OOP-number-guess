@@ -1,7 +1,7 @@
 package oop.fiveonethree.numberguess;
 
-import oop.fiveonethree.numberguess.mapper.UserMapper;
-import oop.fiveonethree.numberguess.model.User;
+import oop.fiveonethree.numberguess.controller.RankController;
+import oop.fiveonethree.numberguess.service.GameService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,30 +14,14 @@ import javax.annotation.Resource;
 public class NumberGuessApplicationTests {
 
     @Resource
-    private UserMapper mapper;
+    private RankController controller;
+
+    @Resource
+    private GameService service;
 
     @Test
     public void contextLoads() {
-        User u = new User();
 
-        u.setUsername("zhouying");
-        u.setPassword("123456");
-        u.setId(3);
-        mapper.save(u);
-
-        u = new User();
-        u.setUsername("zhou");
-        u.setPassword("123");
-        u.setId(2);
-        mapper.save(u);
-
-        u = new User();
-        u.setUsername("ying");
-        u.setPassword("456");
-        u.setId(1);
-        mapper.save(u);
-
-        System.out.println(mapper.findAll());
     }
 
 }

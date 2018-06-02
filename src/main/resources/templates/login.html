@@ -7,7 +7,8 @@
 
     <title>登陆</title>
 
-    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/login.css" rel="stylesheet">
 </head>
 
 <body>
@@ -18,42 +19,69 @@
 
 <div id="login" class="login-tablet">
 
-    <div >
-        <h1>管理员登陆</h1>
-        <form>
-            <input v-model="userName" type="text" placeholder="请输入用户名" >
+    <div class="login-container">
+
+        <h1>用户登录</h1>
+        <form class="login-form">
+            <input v-model="username" type="text" placeholder="请输入用户名" >
             <input v-model="password" type="password" placeholder="请输入密码" >
-            <div class="forgot">
+            <div class="forgot-pass">
                 <i id="tip">{{ tip }}</i>
                 <button @click="loginUser" type="button" id="submitLogin">登录</button>
             </div>
         </form>
-    </div>
 
+    </div>
 </div>
 
 </body>
+
+<script src="/js/jquery-3.3.1.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/js/vue.js"></script>
+<script src="/js/vue-resource.js"></script>
 
 <script>
 
     let app = new Vue({
         el: '#login',
         data: {
-            userName: '',
+            username: '',
+            userId: '',
             password: '',
             tip: ''
         },
         methods: {
             loginUser: function () {
                 let reqData = {
-                    userName: this.userName,
+                    username: this.username,
                     password: this.password
-                }
+                };
 
-                
+                let vm = this;
+                this.$http.post('http://localhost:8080/user/submit_login', reqData)
+                    .then(result => {
+                        let response = result.body;
+                        // alert(JSON.stringify(response));
+                        if (response.status == 200) {
+                            vm.tip = '';
+                            vm.username = response.data.username;
+                            vm.userId = response.data.id;
+                            sessionStorage.username = response.data.username;
+                            sessionStorage.userId = response.data.id;
+                            window.location.href='http://localhost:8080/index';
+                        } else {
+                            vm.tip = response.message;
+                        }
+                }).catch(error => {
+                    console.log(error);
+                });
             }
         }
-    })
+    });
+
+
+
 </script>
 
 </html>

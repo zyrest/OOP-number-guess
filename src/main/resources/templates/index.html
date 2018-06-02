@@ -8,7 +8,7 @@
 
     <title>猜数字游戏</title>
 
-    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap.css" rel="stylesheet">
 
     <style>
         html,body{
@@ -16,6 +16,12 @@
             height: 100%;
             background: #fbf9fe;
         }
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+
+
         #tablet .number-wrap{
             width: 50%;
             height: 44px;
@@ -83,7 +89,19 @@
             margin: 0 auto;
             width: 50%;
         }
-
+        .histories-tablet{
+            height: 100px;
+            overflow: auto;
+            width: 100vw;
+        }
+        ol {
+            font: 15px 'trebuchet MS', 'lucida sans';
+            padding: 0;
+            text-shadow: 0 1px 0 rgba(255,255,255,.5);
+        }
+        .guess-count {
+            font: 15px 'trebuchet MS', 'lucida sans';
+        }
         .noselect {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -94,58 +112,62 @@
     </style>
 </head>
 
-<body>
+<body id="hole">
 
-<nav class="mx-auto navbar sticky-top navbar-light bg-light navbar-expand-lg">
-    <a class="navbar-brand" href="#">@_@ 0.0 :)</a>
+<div id="container">
 
-    <div class="container">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">开始游戏</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">排行榜</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">个人纪录</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+    <nav class="mx-auto navbar sticky-top navbar-light bg-light navbar-expand-lg">
+        <a class="navbar-brand" href="#">@_@ 0.0 :)</a>
 
-<div class="container-fluid">
-    <div class="row mx-auto">
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 mx-auto">
+        <div class="container">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">开始游戏</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/rank">积分榜</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/record">个人纪录</a>
+                </li>
+            </ul>
 
-            <div id="tablet">
-                <div id="results" class="row">
-                    <div class="col-md-6">
-                        你已经猜了{{ guessCount }}次
+            <span>{{ username }}</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row mx-auto">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 mx-auto">
+
+                <div id="tablet">
+                    <div id="results" class="row">
+                        <div v-if="win === false" class="col-md-6 guess-count">
+                            你已经猜了{{ guessCount }}次
+                        </div>
+
+                        <div class="col-md-6">
+                            <ol class="histories-tablet ">
+                                <li class="rounded-list" v-for="hist in histories">{{ hist.number}} - {{ hist.result }}</li>
+                            </ol>
+                        </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <ul>
-                            <li v-for="hist in histories">{{ hist.number}} - {{ hist.result }}</li>
-                        </ul>
+                    <div style="text-align: center">
+                        请输入你猜的数字
                     </div>
-                </div>
 
-                <div style="text-align: center">
-                    请输入你猜的数字
-                </div>
+                    <input id="number-input" ref="number" type="text" maxlength="4" v-model="msg" style="position: absolute;z-index: -1;opacity: 0"/>
+                    <ul class="number-wrap" @click="focusNums">
+                        <li><i v-if="msgLength > 0">{{ msg[0] }}</i></li>
+                        <li><i v-if="msgLength > 1">{{ msg[1] }}</i></li>
+                        <li><i v-if="msgLength > 2">{{ msg[2] }}</i></li>
+                        <li><i v-if="msgLength > 3">{{ msg[3] }}</i></li>
+                    </ul>
 
-                <input id="number-input" ref="number" type="text" maxlength="4" v-model="msg" style="position: absolute;z-index: -1;opacity: 0"/>
-                <ul class="number-wrap" @click="focusNums">
-                    <li><i v-if="msgLength > 0">{{ msg[0] }}</i></li>
-                    <li><i v-if="msgLength > 1">{{ msg[1] }}</i></li>
-                    <li><i v-if="msgLength > 2">{{ msg[2] }}</i></li>
-                    <li><i v-if="msgLength > 3">{{ msg[3] }}</i></li>
-                </ul>
-
-                <div class="kb-wrapper">
-                    <table>
-                        <tbody>
+                    <div class="kb-wrapper">
+                        <table>
+                            <tbody>
                             <tr>
                                 <td @click="updateMsg(1)"><span class="kb-key noselect" value="1">1</span></td>
                                 <td @click="updateMsg(2)"><span class="kb-key noselect" value="2">2</span></td>
@@ -166,30 +188,57 @@
                                 <td @click="updateMsg(0)"><span class="kb-key noselect" value="0">0</span></td>
                                 <td @click="backspace"><span class="kb-key noselect" value="delete"><-</span></td>
                             </tr>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-        </main>
+                <!-- Modal -->
+                <div class="modal fade" id="winModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">恭喜获得胜利！！</h5>
+                            </div>
+                            <div class="modal-body">
+                                是否继续游戏？
+                            </div>
+                            <div class="modal-footer">
+                                <button @click="toRank" type="button" class="btn btn-secondary">排行榜</button>
+                                <button @click="oneMore" type="button" class="btn btn-primary">再来一局</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
     </div>
-</div>
 
+</div>
 
 </body>
 
 
-<script src="../static/js/vue.js"></script>
-<script src="../static/js/jquery-3.3.1.js"></script>
+<script src="/js/vue.js"></script>
+<script src="/js/vue-resource.js"></script>
+<script src="/js/jquery-3.3.1.js"></script>
+<script src="/js/bootstrap.js"></script>
+
 <script>
+    let updateUrl = 'http://localhost:8080/game/save';
+
     let app = new Vue({
-        el: '#tablet',
+        el: '#container',
         data: {
             msg: '',
             msgLength: 0,
             win: false,
             histories: [],
-            guessCount: 0
+            guessCount: 0,
+
+            username: sessionStorage.username,
+            userId: sessionStorage.userId
         },
         computed: {
             targetNums: () => {
@@ -202,7 +251,6 @@
 
         },
         methods: {
-
             focusNums() {
                 this.$refs.number.focus();
             },
@@ -243,10 +291,16 @@
             },
             backspace() {
                 this.msg = this.msg.substr(0, this.msg.length-1)
+            },
+            toRank() {
+                window.location.href='http://localhost:8080/rank';
+            },
+            oneMore() {
+                window.location.href='http://localhost:8080/index';
             }
         },
         watch: {
-            msg(current){
+            msg(current) {
                 if (/[^\d]/g.test(current)) {
                     this.msg = this.msg.replace(/[^\d]/g, '')
                 } else {
@@ -256,11 +310,19 @@
                         if (this.msg === this.targetNums) {
                             this.win = true;
                             $('#number-input').attr("readonly", true);
+                            let reqData = {userId: this.userId, guessCount: this.guessCount};
+
+                            this.$http.post(updateUrl, reqData)
+                                .then(result => {
+                                    $('#winModal').modal()
+                                });
                         } else {
                             let results = this.compareTwoSimilar(current, this.targetNums);
                             let oneHist = {number: current, result: results[0]+'A'+results[1]+'B'};
+
                             this.histories.push(oneHist);
                             this.clearAll();
+                            $('.histories-tablet')[0].scrollTop = $('.histories-tablet')[0].scrollHeight+10;
                         }
                     }
                 }
